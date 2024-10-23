@@ -5,10 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Digital Learning Platform</title>
-    <!-- Link to external CSS file -->
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body id="top">
 
     <header>
         <h1>Digital Learning Platform</h1>
@@ -22,10 +21,6 @@
         <a href="#contact">Contact</a>
     </nav>
 
-    <section class="hero">
-        <h1>Learning</h1>
-    </section>
-
     <section id="about" class="about">
         <h2>About Us</h2>
         <p>We provide a wide range of online courses to help you upskill, reskill, and succeed in your career.</p>
@@ -34,17 +29,29 @@
     <section id="courses" class="courses">
         <h2>Our Courses</h2>
         <div class="course-list">
-            <div class="course">
+            <div class="course-card">
                 <h3>Web Development</h3>
-                <p>Learn how to build websites from scratch with HTML, CSS, JavaScript, and more.</p>
+                <p>Build websites from scratch with HTML, CSS, JavaScript, and more.</p>
+                <div class="progress-bar">
+                    <div class="progress" style="width: 80%;"></div>
+                </div>
+                <button class="enroll-button">Enroll Now</button>
             </div>
-            <div class="course">
+            <div class="course-card">
                 <h3>Data Science</h3>
                 <p>Master data analysis, machine learning, and visualization with Python and other tools.</p>
+                <div class="progress-bar">
+                    <div class="progress" style="width: 70%;"></div>
+                </div>
+                <button class="enroll-button">Enroll Now</button>
             </div>
-            <div class="course">
+            <div class="course-card">
                 <h3>Digital Marketing</h3>
                 <p>Understand SEO, content marketing, and social media strategies for digital growth.</p>
+                <div class="progress-bar">
+                    <div class="progress" style="width: 90%;"></div>
+                </div>
+                <button class="enroll-button">Enroll Now</button>
             </div>
         </div>
     </section>
@@ -73,6 +80,10 @@
     <footer>
         <p>&copy; 2024 Digital Learning Platform. All Rights Reserved.</p>
     </footer>
+
+    <div class="back-to-top">
+        <a href="#top">↑ Back to Top</a>
+    </div>
 
 </body>
 </html>
