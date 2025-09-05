@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Registration - Digital Learning Platform</title>
+  <style>
+    /* same CSS as index.html */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+      transition: background 0.3s, color 0.3s, font-size 0.3s;
+    }
+    body.dark { background-color: #121212; color: #e0e0e0; }
+    header { background-color: #333; color: #fff; text-align: center; padding: 20px; position: relative; }
+    header h1 { margin: 0; font-size: 36px; }
+    header p { font-size: 18px; }
+    nav { margin: 20px 0; text-align: center; }
+    nav a { margin: 0 15px; text-decoration: none; color: #333; font-size: 18px; }
+    nav a:hover { text-decoration: underline; }
+    .header-controls { position: absolute; top: 15px; right: 20px; }
+    .header-controls button { padding: 8px 14px; margin-left: 5px; background: #007bff; color: #fff; border: none; border-radius: 5px; cursor: pointer; }
+    .header-controls button:hover { background: #0056b3; }
+    form { max-width: 600px; margin: 20px auto; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    form h2 { text-align: center; }
+    form label { display: block; margin: 10px 0 5px; }
+    form input { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 6px; }
+    form button { width: 100%; padding: 12px; background: #007bff; color: #fff; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; }
+    form button:hover { background: #0056b3; }
+    #cart { position: fixed; right: 20px; top: 100px; width: 280px; background: white; border: 1px solid #ccc; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); padding: 15px; display: none; z-index: 1000; }
+    body.dark #cart { background: #1e1e1e; border: 1px solid #555; }
+    footer { background-color: #333; color: #fff; text-align: center; padding: 20px; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Digital Learning Platform</h1>
+    <p>Your gateway to the future of education</p>
+    <div class="header-controls">
+      <button onclick="toggleDarkMode()">🌙 Dark Mode</button>
+      <button onclick="toggleCart()">🛒 Cart (<span id="cart-count">0</span>)</button>
+    </div>
+  </header>
+
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="teacher-register.html">Teacher Registration</a>
+    <a href="student-register.html">Student Registration</a>
+    <a href="student-login.html">Student Login</a>
+    <a href="contact.html">Contact Us</a>
+    <a href="quiz.html">Take Quiz</a>
+  </nav>
+
+  <section id="preferences" style="text-align:center;margin:20px;">
+    <label for="fontSize">Font Size:</label>
+    <select id="fontSize" onchange="changeFontSize(this.value)">
+      <option value="16px">Default</option>
+      <option value="18px">Medium</option>
+      <option value="20px">Large</option>
+    </select>
+  </section>
+
+  <form id="student-form">
+    <h2>Student Registration</h2>
+    <label for="sname">Full Name</label>
+    <input type="text" id="sname" required>
+    <label for="semail">Email</label>
+    <input type="email" id="semail" required>
+    <label for="spassword">Password</label>
+    <input type="password" id="spassword" required>
+    <button type="submit">Register</button>
+  </form>
+
+  <div id="cart">
+    <h3>Your Cart</h3>
+    <ul id="cart-items"></ul>
+    <button onclick="checkout()">Checkout</button>
+  </div>
+
+  <footer>
+    <p>&copy; 2024 Digital Learning Platform. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // same JS (dark mode, font-size, cart) + simple student storage & redirect
+    function toggleDarkMode() { document.body.classList.toggle("dark"); localStorage.setItem("darkMode", document.body.classList.contains("dark")); }
+    window.onload = () => {
+      if (localStorage.getItem("darkMode") === "true") document.body.classList.add("dark");
+      if (localStorage.getItem("fontSize")) {
+        document.body.style.fontSize = localStorage.getItem("fontSize");
+        const el = document.getElementById("fontSize");
+        if(el) el.value = localStorage.getItem("fontSize");
+      }
+      updateCartCount();
+    };
+    function changeFontSize(size) { document.body.style.fontSize = size; localStorage.setItem("fontSize", size); }
+
+    let cart = [];
+    function addToCart(course) { cart.push(course); document.getElementById("cart-count").innerText = cart.length; renderCart(); }
+    function toggleCart() { const cartDiv=document.getElementById("cart"); cartDiv.style.display = cartDiv.style.display === "block" ? "none" : "block"; }
+    function renderCart(){ const ul=document.getElementById("cart-items"); ul.innerHTML=''; cart.forEach((it, idx)=>{ const li=document.createElement('li'); li.textContent=it+' '; const btn=document.createElement('button'); btn.textContent='❌'; btn.style.marginLeft='10px'; btn.onclick=()=>{ cart.splice(idx,1); document.getElementById('cart-count').innerText=cart.length; renderCart(); }; li.appendChild(btn); ul.appendChild(li); }); }
+    function checkout(){ if(cart.length===0) alert('Your cart is empty!'); else alert('Proceeding to checkout for: ' + cart.join(', ')); }
+    function updateCartCount(){ const el=document.getElementById('cart-count'); if(el) el.innerText = cart.length; }
+
+    // Student registration: store in localStorage and redirect to login
+    document.getElementById('student-form').addEventListener('submit', function(e){
+      e.preventDefault();
+      const student = { name: document.getElementById('sname').value, email: document.getElementById('semail').value, password: document.getElementById('spassword').value };
+      localStorage.setItem('student-' + student.email, JSON.stringify(student));
+      alert('Student registered successfully! Please login.');
+      window.location.href = 'student-login.html';
+    });
+  </script>
+</body>
+</html>
