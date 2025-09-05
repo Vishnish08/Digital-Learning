@@ -5,11 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Digital Learning Platform</title>
   <style>
+    /* General Styles */
     body {
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
       background-color: #f4f4f4;
+      transition: background 0.3s, color 0.3s, font-size 0.3s;
+    }
+    body.dark {
+      background-color: #121212;
+      color: #e0e0e0;
     }
 
     header {
@@ -17,44 +23,49 @@
       color: #fff;
       text-align: center;
       padding: 20px;
+      position: relative;
     }
-
-    header h1 {
-      margin: 0;
-      font-size: 36px;
-    }
-
-    header p {
-      font-size: 18px;
-    }
+    header h1 { margin: 0; font-size: 36px; }
+    header p { font-size: 18px; }
 
     nav {
       margin: 20px 0;
       text-align: center;
     }
-
     nav a {
       margin: 0 15px;
       text-decoration: none;
       color: #333;
       font-size: 18px;
     }
+    nav a:hover { text-decoration: underline; }
+    body.dark nav a { color: #fff; }
 
-    nav a:hover {
-      text-decoration: underline;
+    /* Toggle & Cart Buttons */
+    .header-controls {
+      position: absolute;
+      top: 15px;
+      right: 20px;
     }
-
-    #courses {
-      margin: 20px;
+    .header-controls button {
+      padding: 8px 14px;
+      margin-left: 5px;
+      background: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
     }
+    .header-controls button:hover { background: #0056b3; }
 
+    /* Course Section */
+    #courses { margin: 20px; }
     .course-list {
       display: flex;
       flex-wrap: wrap;
       gap: 20px;
       justify-content: space-around;
     }
-
     .course-card {
       background-color: #fff;
       border-radius: 8px;
@@ -63,25 +74,58 @@
       width: 30%;
       text-align: center;
       padding: 10px;
+      transition: background 0.3s, color 0.3s;
     }
-
     .course-card img {
       width: 100%;
       height: auto;
       border-bottom: 2px solid #eee;
     }
+    .course-card h3 { font-size: 24px; margin-top: 10px; }
+    .course-card p { font-size: 16px; color: #444; margin-top: 10px; }
+    body.dark .course-card { background-color: #1e1e1e; color: #e0e0e0; }
+    body.dark .course-card p { color: #bbb; }
 
-    .course-card h3 {
-      font-size: 24px;
+    /* Buy Button */
+    .buy-btn {
       margin-top: 10px;
+      background-color: #28a745;
+      color: white;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
     }
+    .buy-btn:hover { background-color: #218838; }
 
-    .course-card p {
-      font-size: 16px;
-      color: #444;
-      margin-top: 10px;
+    /* Cart Section */
+    #cart {
+      position: fixed;
+      right: 20px;
+      top: 100px;
+      width: 280px;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      padding: 15px;
+      display: none;
+      z-index: 1000;
     }
+    body.dark #cart { background: #1e1e1e; border: 1px solid #555; }
+    #cart h3 { margin-top: 0; }
+    #cart ul { padding: 0; list-style: none; }
+    #cart li { margin: 5px 0; }
+    #cart button { margin-top: 10px; width: 100%; }
 
+    /* Preferences */
+    #preferences {
+      text-align: center;
+      margin: 20px;
+    }
+    #preferences label { font-weight: bold; margin-right: 10px; }
+
+    /* Footer */
     footer {
       background-color: #333;
       color: #fff;
@@ -89,12 +133,7 @@
       padding: 20px;
       margin-top: 20px;
     }
-
-    footer a {
-      color: #fff;
-      margin: 0 10px;
-      text-decoration: none;
-    }
+    footer a { color: #fff; margin: 0 10px; text-decoration: none; }
   </style>
 </head>
 <body>
@@ -102,6 +141,10 @@
   <header>
     <h1>Digital Learning Platform</h1>
     <p>Your gateway to the future of education</p>
+    <div class="header-controls">
+      <button onclick="toggleDarkMode()">🌙 Dark Mode</button>
+      <button onclick="toggleCart()">🛒 Cart (<span id="cart-count">0</span>)</button>
+    </div>
   </header>
 
   <nav>
@@ -109,6 +152,17 @@
     <a href="quiz.html">Take Quiz</a>
   </nav>
 
+  <!-- Preferences -->
+  <section id="preferences">
+    <label for="fontSize">Font Size:</label>
+    <select id="fontSize" onchange="changeFontSize(this.value)">
+      <option value="16px">Default</option>
+      <option value="18px">Medium</option>
+      <option value="20px">Large</option>
+    </select>
+  </section>
+
+  <!-- Courses -->
   <section id="courses">
     <h2 style="text-align:center;">Our Courses</h2>
     <div class="course-list">
@@ -119,6 +173,7 @@
           <img src="https://img.youtube.com/vi/UB1O30fR-EE/0.jpg" alt="Web Dev" />
         </a>
         <p>Learn to build responsive websites using HTML, CSS, JavaScript, and frameworks like React.</p>
+        <button class="buy-btn" onclick="addToCart('Web Development')">Buy Now</button>
       </div>
 
       <div class="course-card">
@@ -127,6 +182,7 @@
           <img src="https://img.youtube.com/vi/ua-CiDNNj30/0.jpg" alt="Data Science" />
         </a>
         <p>Explore data analysis, statistics, and Python to uncover insights and build predictive models.</p>
+        <button class="buy-btn" onclick="addToCart('Data Science')">Buy Now</button>
       </div>
 
       <div class="course-card">
@@ -135,6 +191,7 @@
           <img src="https://img.youtube.com/vi/XuUbLHIRyuM/0.jpg" alt="Marketing" />
         </a>
         <p>Master SEO, social media, and analytics to run powerful online marketing campaigns.</p>
+        <button class="buy-btn" onclick="addToCart('Digital Marketing')">Buy Now</button>
       </div>
 
       <div class="course-card">
@@ -143,6 +200,7 @@
           <img src="https://img.youtube.com/vi/hlGoQC332VM/0.jpg" alt="SQL" />
         </a>
         <p>Learn SQL for managing and querying databases efficiently with hands-on examples.</p>
+        <button class="buy-btn" onclick="addToCart('SQL')">Buy Now</button>
       </div>
 
       <div class="course-card">
@@ -151,6 +209,7 @@
           <img src="https://img.youtube.com/vi/LvC68w9JS4Y/0.jpg" alt="ML" />
         </a>
         <p>Understand algorithms and data modeling techniques to build smart AI systems.</p>
+        <button class="buy-btn" onclick="addToCart('Machine Learning')">Buy Now</button>
       </div>
 
       <div class="course-card">
@@ -159,6 +218,7 @@
           <img src="https://img.youtube.com/vi/5NgNicANyqM/0.jpg" alt="AI" />
         </a>
         <p>Dive into the world of AI, neural networks, and deep learning to shape the future.</p>
+        <button class="buy-btn" onclick="addToCart('Artificial Intelligence')">Buy Now</button>
       </div>
 
       <div class="course-card">
@@ -167,6 +227,7 @@
           <img src="https://img.youtube.com/vi/2LaAJq1lB1Q/0.jpg" alt="Cloud" />
         </a>
         <p>Learn about cloud services like AWS, Azure, and how to deploy scalable applications.</p>
+        <button class="buy-btn" onclick="addToCart('Cloud Computing')">Buy Now</button>
       </div>
 
       <div class="course-card">
@@ -175,6 +236,7 @@
           <img src="https://img.youtube.com/vi/UrsmFxEIp5k/0.jpg" alt="Python" />
         </a>
         <p>Start programming in Python — perfect for beginners and essential for data science.</p>
+        <button class="buy-btn" onclick="addToCart('Python')">Buy Now</button>
       </div>
 
       <div class="course-card">
@@ -183,11 +245,20 @@
           <img src="https://img.youtube.com/vi/eIrMbAQSU34/0.jpg" alt="Java" />
         </a>
         <p>Understand object-oriented programming and core concepts in Java for backend or Android dev.</p>
+        <button class="buy-btn" onclick="addToCart('Java')">Buy Now</button>
       </div>
 
     </div>
   </section>
 
+  <!-- Cart -->
+  <div id="cart">
+    <h3>Your Cart</h3>
+    <ul id="cart-items"></ul>
+    <button onclick="checkout()">Checkout</button>
+  </div>
+
+  <!-- Footer -->
   <footer>
     <p>&copy; 2024 Digital Learning Platform. All rights reserved.</p>
     <p>Empowering learners to grow and succeed in the digital age.</p>
@@ -200,7 +271,62 @@
     </p>
     <p>📲 Join to get updates for internships and certificate courses</p>
   </footer>
-  
 
+  <script>
+    // Dark Mode
+    function toggleDarkMode() {
+      document.body.classList.toggle("dark");
+      localStorage.setItem("darkMode", document.body.classList.contains("dark"));
+    }
+    // Load dark mode preference
+    window.onload = () => {
+      if (localStorage.getItem("darkMode") === "true") {
+        document.body.classList.add("dark");
+      }
+      if (localStorage.getItem("fontSize")) {
+        document.body.style.fontSize = localStorage.getItem("fontSize");
+        document.getElementById("fontSize").value = localStorage.getItem("fontSize");
+      }
+    };
+
+    // Font Size Preference
+    function changeFontSize(size) {
+      document.body.style.fontSize = size;
+      localStorage.setItem("fontSize", size);
+    }
+
+    // Cart System
+    let cart = [];
+    function addToCart(course) {
+      cart.push(course);
+      document.getElementById("cart-count").innerText = cart.length;
+      renderCart();
+    }
+    function toggleCart() {
+      const cartDiv = document.getElementById("cart");
+      cartDiv.style.display = (cartDiv.style.display === "block") ? "none" : "block";
+    }
+    function renderCart() {
+      const cartItems = document.getElementById("cart-items");
+      cartItems.innerHTML = "";
+      cart.forEach((item, index) => {
+        let li = document.createElement("li");
+        li.textContent = item + " ";
+        let removeBtn = document.createElement("button");
+        removeBtn.textContent = "❌";
+        removeBtn.style.marginLeft = "10px";
+        removeBtn.onclick = () => { cart.splice(index, 1); document.getElementById("cart-count").innerText = cart.length; renderCart(); };
+        li.appendChild(removeBtn);
+        cartItems.appendChild(li);
+      });
+    }
+    function checkout() {
+      if (cart.length === 0) {
+        alert("Your cart is empty!");
+      } else {
+        alert("Proceeding to checkout for: " + cart.join(", "));
+      }
+    }
+  </script>
 </body>
 </html>
